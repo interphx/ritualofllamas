@@ -1,0 +1,58 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>{title}</title>
+
+    <link rel="stylesheet" href="normalize.min.css">
+    <link rel="stylesheet" href="main.css">
+    <script type="text/javascript">
+        var htmlElement = document.htmlElement || document.getElementsByTagName("html")[0];
+        htmlElement.className = htmlElement.className.replace(/\bno\-js\b/g, '');
+    </script>
+    <style>
+        html, body {
+            font-family: Verdana, Tahoma, sans-serif;
+            font-size: 16px;
+            padding: 0;
+            margin: 0;
+        }
+    
+        .no-js-message {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: yellow;
+            font-size: 24px;
+            font-size: calc(100% + 2vh);
+            display: none;
+            overflow: auto;
+        }
+        .no-js-message__text {
+            display: inline-block;
+            max-width: 80%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            padding-top: 16px;
+            cursor: default;
+        }
+        .no-js .no-js-message {
+            display: block;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="no-js-message">
+        <div class="no-js-message__text">
+            Sorry, but you need JavaScript enabled to play this game. Enable it in your browser settings or use other browser.
+        </div>
+    </div>
+    <div id="mount"></div>
+    <script src="bundle.js"></script>
+  </body>
+</html>
