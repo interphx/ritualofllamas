@@ -14,7 +14,7 @@ import { InteractionState } from "view-model/interaction-state";
 
 @DragDropContext(HTML5Backend)
 class App extends React.Component<{}, {}> {
-  render(): JSX.Element | null {
+  render(): JSX.Element | null | false {
     return (
       <div className="app">
         <ResourcesView resources={game.player.resources} />

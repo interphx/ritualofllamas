@@ -31,6 +31,31 @@ export class WorldArea {
         return this.grid.height;
     }
 
+    @action tickActivatable(x: number, y: number, dt: number) {
+        var activatable = this.grid.get(x, y).activatable;
+        if (!activatable) {
+            throw new Error(`Attempt to tick a non-existent activatable at (${x}, ${y})`);
+        }
+        var pattern = activatable.pattern;
+        var topLeftX = x - activatable.posInPatternX;
+        var topLeftY = y - activatable.posInPatternY;
+        console.log(topLeftX, topLeftY);
+        var slice = this.grid.getDataSlice(topLeftX, topLeftY, pattern.width, pattern.height);
+        if (pattern.match(slice)) {
+            activatable.progress(dt);
+        }
+    }
+
+    @action tickActivatables(dt: number) {
+        for (var i = 0; i < this.getWidth(); ++i) {
+            for (var j = 0; j < this.getHeight(); ++j) {
+                if (this.grid.get(i, j).activatable) {
+                    this.tickActivatable(i, j, dt);
+                }
+            }
+        }
+    }
+
     @action expand(direction: CardinalDirection) {
         if (direction === 'north') {
             this.grid.insertRow(0);

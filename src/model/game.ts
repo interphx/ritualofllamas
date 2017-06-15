@@ -9,6 +9,7 @@ import { Grid } from "util/grid";
 import { Tile } from "model/tile";
 import { ResourceBag } from "model/resource-bag";
 import { Llama } from "model/llama";
+import { Activatable } from "model/activatable";
 
 export interface GameModel {
     player: Player;
@@ -63,11 +64,16 @@ export var game: GameModel = {
     tick(dt: number) {
         for (var locationId in this.locations) {
             var location = this.locations[locationId];
+
+            // Income
             var patterns = location.findAllPatterns(getObjectValues(this.patterns));
             var income = ResourceBag.sum(patterns.map(pattern => pattern.getOutputPerSecond()));
             income.multiplyAllBy(dt);
 
             this.player.resources.addResources(income);
+
+            // Activatables
+            location.tickActivatables(dt);
         }
     },
     
@@ -92,7 +98,19 @@ export var game: GameModel = {
     locations: {
         'startingZone': new WorldArea(
             'Starting Zone',
-            new Grid<Tile>(3, 3, (x, y) => new Tile('None'))
+            function() {
+                var result = new Grid<Tile>(5, 5, (x, y) => new Tile('None'));
+                var tile = result.get(4, 4);
+                tile.activatable = new Activatable(
+                    new Pattern<Tile>(3, 3, match => match.reduce((sum, tile) => tile.llama !== 'None' ? sum + 1 : sum, 0) >= 3, () => new ResourceBag({money: 10})),
+                    () => {
+                        tile.llama = 'Llam';
+                        tile.activatable = null;
+                    },
+                    1
+                );
+                return result;
+            }()
         ),
         'testCave': new WorldArea(
             'Test Cave',
