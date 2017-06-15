@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js --display-error-details",
-    "watch": "webpack --config webpack.config.js --watch --display-error-details"
+    "watch": "webpack --config webpack.config.js --watch --display-error-details",
+    "serve": "http-server ./dist/"
   },
   "author": "",
   "license": "ISC",

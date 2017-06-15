@@ -102,7 +102,7 @@ export var game: GameModel = {
                 var result = new Grid<Tile>(5, 5, (x, y) => new Tile('None'));
                 var tile = result.get(4, 4);
                 tile.activatable = new Activatable(
-                    new Pattern<Tile>(3, 3, match => match.reduce((sum, tile) => tile.llama !== 'None' ? sum + 1 : sum, 0) >= 3, () => new ResourceBag({money: 10})),
+                    new Pattern<Tile | null>(3, 3, match => match.reduce((sum, tile) => tile ? (tile.llama !== 'None' ? sum + 1 : sum) : sum, 0) >= 3, () => new ResourceBag({money: 10})),
                     () => {
                         tile.llama = 'Llam';
                         tile.activatable = null;

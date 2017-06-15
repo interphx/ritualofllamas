@@ -12,7 +12,7 @@ export class Activatable {
     protected activated: boolean = false;
 
     constructor(
-        public readonly pattern: Pattern<Tile>,
+        public readonly pattern: Pattern<Tile | null>,
         public readonly onActivated: Function,
         public readonly activationCapacity: number = 100,
         public readonly posInPatternX: number = Math.floor(pattern.width / 2),

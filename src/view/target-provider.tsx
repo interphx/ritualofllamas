@@ -27,7 +27,7 @@ function isValidTarget(target: EffectTarget | EffectTarget[], targetType: Effect
     return Boolean(tryGetValidTarget);
 }
 
-@Dropzone(
+/*@Dropzone(
     'item', 
     (props: TargetProviderViewProps, item) => {
         var target = tryGetValidTarget(props.providedTarget, item.itemStack.getItemDefinition().effects[0].targetType);
@@ -40,9 +40,9 @@ function isValidTarget(target: EffectTarget | EffectTarget[], targetType: Effect
     (props, item) => {
         return isValidTarget(props.providedTarget, item.itemStack.getItemDefinition().effects[0].targetType);
     }
-)
+)*/
 @observer
-export class TargetProviderView extends React.Component<TargetProviderViewProps, {}> {
+class TargetProviderViewBase extends React.Component<TargetProviderViewProps, {}> {
     constructor(props: TargetProviderViewProps) {
         super(props);
 
@@ -103,3 +103,18 @@ export class TargetProviderView extends React.Component<TargetProviderViewProps,
         );
     }
 }
+
+export var TargetProviderView = Dropzone(
+    'item', 
+    (props: TargetProviderViewProps, item) => {
+        var target = tryGetValidTarget(props.providedTarget, item.itemStack.getItemDefinition().effects[0].targetType);
+        if (!target) {
+            console.error(`Attempt to use an item on invalid target`);
+            return;
+        }
+        item.inventory.useItem(item.itemStack.getItemDefinition(), target);
+    },
+    (props, item) => {
+        return isValidTarget(props.providedTarget, item.itemStack.getItemDefinition().effects[0].targetType);
+    }
+)(TargetProviderViewBase);

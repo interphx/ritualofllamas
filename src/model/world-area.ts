@@ -70,7 +70,7 @@ export class WorldArea {
 
 
 
-    findAllPatterns(possiblePatterns: Pattern<Tile>[]): Pattern<any>[] {
+    findAllPatterns(possiblePatterns: Pattern<Tile | null>[]): Pattern<any>[] {
         var results: Pattern<Tile>[] = [];
 
         for (var pattern of possiblePatterns) {

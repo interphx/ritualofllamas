@@ -1,0 +1,33 @@
+.target-provider {
+
+}
+
+.target-provider--valid-target {
+    opacity: 0.8;
+}
+
+
+.world-area__tile {
+    width: 32px;
+    height: 32px;
+    background: white;
+}
+
+.world-area__tile--llama {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    background: yellow;
+    vertical-align: middle;
+}
+
+.tile {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    font-family: Consolas, "Courier New", monospace;
+    text-align: center;
+}
