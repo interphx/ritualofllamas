@@ -13,14 +13,7 @@
     background: white;
 }
 
-.world-area__tile--llama {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    margin: 0;
-    background: yellow;
-    vertical-align: middle;
-}
+
 
 .tile {
     width: 32px;
@@ -28,6 +21,15 @@
     padding: 0;
     margin: 0;
     font-size: 12px;
+    vertical-align: middle;
     font-family: Consolas, "Courier New", monospace;
     text-align: center;
+}
+
+.tile--llama {
+    background: yellow;
+}
+
+.tile--activatable {
+    background: cyan;
 }

@@ -42,8 +42,7 @@ export class WorldAreaView extends React.Component<WorldAreaViewProps, {}> {
                         props.worldArea.getRows().map((row, rowIndex) => 
                             <tr className="world-area__row" key={rowIndex}>
                                 { row.map((tile, tileIndex) => 
-                                    <td className={"world-area__tile " + (tile.llama !== 'None' ? 'world-area__tile--llama' : '')}
-                                        key={rowIndex + '-' + tileIndex}>
+                                    <td className="world-area__tile" key={rowIndex + '-' + tileIndex}>
                                         <TargetProviderView interaction={this.props.interaction} providedTarget={{type: 'tile', tile}}>
                                             <TileView tile={tile} inventory={this.props.inventory} />
                                         </TargetProviderView>

@@ -8,6 +8,13 @@ export function constant<T>(value: T) {
     };
 }
 
+export function tap<T>(callback: (value: T) => T) {
+    return function(value: T) {
+        callback(value);
+        return value;
+    }
+}
+
 export function pick<TObj, TKey extends keyof TObj>(keys: TKey[]) {
     return function(obj: TObj): Pick<TObj, TKey> {
         var result: Partial<Pick<TObj, TKey>> = {};

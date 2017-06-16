@@ -4,6 +4,9 @@ import {Grid} from 'util/grid';
 import {Tile} from 'model/tile';
 import {CardinalDirection} from 'model/cardinal-direction';
 import {Pattern} from 'model/pattern';
+import { TilePatternInstance } from "model/tile-pattern-instance";
+import { RitualInstance } from "model/ritual-instance";
+import { Ritual } from "model/ritual";
 
 export class WorldArea {
     @observable
@@ -68,10 +71,16 @@ export class WorldArea {
         }
     }
 
+    findAllRituals(possibleRituals: Ritual[]): RitualInstance[] {
+        return this
+            .findAllPatterns(possibleRituals.map(ritual => ritual.pattern))
+            .map(patternInstance => 
+                new RitualInstance(possibleRituals.find(ritual => ritual.pattern === patternInstance.pattern)!, patternInstance
+            ));
+    }
 
-
-    findAllPatterns(possiblePatterns: Pattern<Tile | null>[]): Pattern<any>[] {
-        var results: Pattern<Tile>[] = [];
+    findAllPatterns(possiblePatterns: Pattern<Tile | null>[]): TilePatternInstance[] {
+        var results: TilePatternInstance[] = [];
 
         for (var pattern of possiblePatterns) {
             if (this.grid.width < pattern.width || this.grid.height < pattern.height) {
@@ -82,7 +91,7 @@ export class WorldArea {
                 for (var j = 0; j < this.grid.height - pattern.height + 1; ++j) {
                     var slice = this.grid.getDataSlice(i, j, pattern.width, pattern.height);
                     if (pattern.match(slice)) {
-                        results.push(pattern);
+                        results.push(new TilePatternInstance(pattern, i, j));
                     }
                 }
             }
