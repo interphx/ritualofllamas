@@ -31,6 +31,7 @@ export var Setters = {
 };
 
 export class Grid<T> {
+    @observable
     protected data: (T | undefined)[];
 
     @observable
@@ -115,11 +116,15 @@ export class Grid<T> {
     }
 
     // TODO: Optimize
-    getDataSlice(topLeftX: number, topLeftY: number, width: number, height: number): T[] {
-        var result: T[] = [];
+    getDataSlice(topLeftX: number, topLeftY: number, width: number, height: number): (T | null)[] {
+        var result: (T | null)[] = [];
         for (var j = topLeftY; j < topLeftY + height; ++j) {
             for (var i = topLeftX; i < topLeftX + width; ++i){
-                result.push(this.get(i, j));
+                if (this.isInBounds(i, j)) {
+                    result.push(this.get(i, j));
+                } else {
+                    result.push(null);
+                }
             }
         }
         return result;

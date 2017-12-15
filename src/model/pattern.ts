@@ -4,8 +4,7 @@ export class Pattern<T> {
     constructor(
         public readonly width: number,
         public readonly height: number,
-        public readonly match: (fieldSlice: T[]) => boolean,
-        public readonly getOutputPerSecond: () => ResourceBag<string>
+        public readonly match: (fieldSlice: T[]) => boolean
     ) {
 
     }
@@ -13,8 +12,7 @@ export class Pattern<T> {
     static fromExactMatch<T>(
         width: number,
         height: number,
-        match: T[],
-        getOutputPerSecond: () => ResourceBag<string>
+        match: T[]
     ): Pattern<T> {
         var sliceLength = width * height;
         if (match.length !== sliceLength) {
@@ -32,6 +30,6 @@ export class Pattern<T> {
             return true;
         }
 
-        return new Pattern(width, height, matcher, getOutputPerSecond);
+        return new Pattern(width, height, matcher);
     }
 }

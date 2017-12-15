@@ -30,6 +30,16 @@ export class TileView extends React.Component<TileViewProps, {}> {
     }
 
     render() {
-        return (<div className="tile" onClick={this.handleClick}>{this.props.tile.llama}</div>)
+        var props = this.props;
+        var llamaClass = props.tile.llama !== 'None' ? 'tile--llama' : '';
+        var activatableClass = props.tile.activatable ? 'tile--activatable' : '';
+
+        var content = this.props.tile.activatable ? this.props.tile.activatable.getActivationProgress() : this.props.tile.llama;
+
+        return (
+            <div className={`tile ${llamaClass} ${activatableClass}`} onClick={this.handleClick}>
+                {content}
+            </div>
+        )
     }
 }

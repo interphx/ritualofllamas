@@ -7,7 +7,7 @@ export class Tile {
     @observable
     public llama: Llama;
     @observable
-    public activatable: Activatable | null;
+    public activatable?: Activatable | null;
 
     constructor(llama: Llama) {
         this.llama = llama;

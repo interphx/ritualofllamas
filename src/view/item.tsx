@@ -17,10 +17,8 @@ interface ItemViewProps {
    dndDraggableProps?: DnDDraggableProps;
 }
 
-
-@Draggable( 'item', (props: ItemViewProps) => ({ itemStack: props.itemStack, inventory: props.inventory }) )
 @observer
-export class ItemView extends React.Component<ItemViewProps, {}> {
+class ItemViewBase extends React.Component<ItemViewProps, {}> {
     constructor(props: ItemViewProps) {
         super(props);
 
@@ -55,3 +53,5 @@ export class ItemView extends React.Component<ItemViewProps, {}> {
         );
     }
 }
+
+export var ItemView = Draggable( 'item', (props: ItemViewProps) => ({ itemStack: props.itemStack, inventory: props.inventory }) )(ItemViewBase);

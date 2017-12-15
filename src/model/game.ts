@@ -10,13 +10,15 @@ import { Tile } from "model/tile";
 import { ResourceBag } from "model/resource-bag";
 import { Llama } from "model/llama";
 import { Activatable } from "model/activatable";
+import { Ritual } from "model/ritual";
+import { lerp, inverseLerp } from "util/math";
 
 export interface GameModel {
     player: Player;
     shop: Shop;
     itemDefs: { [key: string]: ItemDefinition };
     locations: { [key: string]: WorldArea };
-    patterns: {[key: string]: Pattern<Tile>};
+    patterns: {[key: string]: Ritual};
 
     tick(dt: number): void;
 }
@@ -31,20 +33,23 @@ function getObjectValues<T extends {[ket: string]: any}>(obj: T) {
     return result;
 }
 
-function compareTileWithCharacter(tile: Tile, character: string): boolean {
+function compareTileWithCharacter(tile: Tile | null, character: string): boolean {
     character = character.toUpperCase();
 
     if (character === '*') return true;
+    if (character === ' ' && (!tile || tile.llama === 'None')) return true;
+    if (!tile) return false;
+
     if (character === 'L' && tile.llama === 'Llam') return true;
-    if (character === ' ' && tile.llama === 'None') return true;
+    
     return false;
 }
 
-function makePattern(width: number, height: number, shape: string[], incomeGetter: () => ResourceBag<string>) {
+function makePattern(width: number, height: number, shape: string[]) {
     if (shape.length !== (width*height)) {
-        throw new Error(`Attempted to create z ${width}x${height} pattern from ${shape.length} characters`);
+        throw new Error(`Attempted to create a ${width}x${height} pattern from ${shape.length} characters`);
     }
-    var checker = function(slice: Tile[]) {
+    var checker = function(slice: (Tile | null)[]) {
         for (var i = 0; i < slice.length; ++i) {
             var tile = slice[i];
             var character = shape[i];
@@ -54,7 +59,7 @@ function makePattern(width: number, height: number, shape: string[], incomeGette
         }
         return true;
     }
-    return new Pattern(width, height, checker, incomeGetter);
+    return new Pattern(width, height, checker);
 }
 
 var testPlayer = new Player('Test Player');
@@ -66,8 +71,8 @@ export var game: GameModel = {
             var location = this.locations[locationId];
 
             // Income
-            var patterns = location.findAllPatterns(getObjectValues(this.patterns));
-            var income = ResourceBag.sum(patterns.map(pattern => pattern.getOutputPerSecond()));
+            var rituals = location.findAllRituals(getObjectValues(this.patterns));
+            var income = ResourceBag.sum(rituals.map(ritualInstance => ritualInstance.ritual.getOutputPerSecond()));
             income.multiplyAllBy(dt);
 
             this.player.resources.addResources(income);
@@ -99,16 +104,25 @@ export var game: GameModel = {
         'startingZone': new WorldArea(
             'Starting Zone',
             function() {
-                var result = new Grid<Tile>(5, 5, (x, y) => new Tile('None'));
-                var tile = result.get(4, 4);
-                tile.activatable = new Activatable(
-                    new Pattern<Tile>(3, 3, match => match.reduce((sum, tile) => tile.llama !== 'None' ? sum + 1 : sum, 0) >= 3, () => new ResourceBag({money: 10})),
-                    () => {
-                        tile.llama = 'Llam';
-                        tile.activatable = null;
-                    },
-                    1
-                );
+                var generator = function(x: number, y: number) {
+                    var distance = Math.abs(x) + Math.abs(y);
+                    var chestProbability = lerp(0.02, 0.1, inverseLerp(2, 10, distance));
+                    if (Math.random() <= chestProbability) {
+                        var tile = new Tile('None');
+                        tile.activatable = new Activatable(
+                            new Pattern<Tile | null>(3, 3, match => match.reduce((sum, tile) => tile ? (tile.llama !== 'None' ? sum + 1 : sum) : sum, 0) >= 3),
+                            () => {
+                                tile.llama = 'Llam';
+                                tile.activatable = null;
+                            },
+                            10
+                        );
+                        return tile;
+                    } else {
+                        return new Tile('None');
+                    }
+                };
+                var result = new Grid<Tile>(5, 5, generator);
                 return result;
             }()
         ),
@@ -120,44 +134,44 @@ export var game: GameModel = {
 
 
     patterns: {
-        'test0': makePattern(
+        'test0': new Ritual(makePattern(
             3, 3,
             [
                 ' ', 'L', ' ',
                 ' ', 'L', ' ',
                 'L', 'L', 'L'
-            ],
+            ]),
             () => new ResourceBag({money: 1})
         ),
-        'test1': makePattern(
+        'test1': new Ritual(makePattern(
             3, 3,
             [
                 'L', 'L', 'L',
                 ' ', 'L', ' ',
                 'L', 'L', 'L'
-            ],
+            ]),
             () => new ResourceBag({money: 2})
         ),
-        'test2': makePattern(
+        'test2': new Ritual(makePattern(
             3, 4,
             [
                 'L', ' ', ' ',
                 ' ', 'L', ' ',
                 ' ', ' ', 'L',
                 'L', 'L', 'L'
-            ],
+            ]),
             () => new ResourceBag({money: 3})
         ),
-        'test3': makePattern(
+        'test3': new Ritual(makePattern(
             4, 3,
             [
                 'L', 'L', 'L', 'L',
                 'L', ' ', ' ', 'L',
                 'L', 'L', 'L', 'L'
-            ],
+            ]),
             () => new ResourceBag({money: 4})
         ),
-        'test4': makePattern(
+        'test4': new Ritual(makePattern(
             6, 6,
             [
                 '*', '*', '*', '*', '*', 'L',
@@ -166,7 +180,7 @@ export var game: GameModel = {
                 '*', '*', 'L', 'L', '*', '*',
                 '*', 'L', '*', '*', '*', '*',
                 'L', '*', '*', '*', '*', '*'
-            ],
+            ]),
             () => new ResourceBag({money: 8})
         )
     }
