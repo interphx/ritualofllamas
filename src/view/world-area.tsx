@@ -27,7 +27,7 @@ export class WorldAreaView extends React.Component<WorldAreaViewProps, {}> {
     render() {
         var props = this.props;
         return (
-            <div className="world-area">
+            <div className="world-area-container">
                 <button className="world-area__expand-button"
                         onClick={()=>props.shop.expandLocation(props.worldArea, 'north')}>Expand north</button>
                 <button className="world-area__expand-button" 

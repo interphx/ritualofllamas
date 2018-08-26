@@ -19,7 +19,7 @@ export class ResourceBag<TKey extends string> {
     }
 
     getResource(name: TKey): number {
-        return this.values[name] || 0;
+        return (this.values[name] || 0)!;
     }
 
     addResource(name: TKey, amount: number) {
