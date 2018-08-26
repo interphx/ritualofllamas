@@ -42,9 +42,14 @@ export class TileView extends React.Component<TileViewProps, {}> {
             null;
 
         return (
-            <div className={`tile tile--grass`} onClick={this.handleClick}>
-                {obj}
-                <div className="tile__text">{content}</div>
+            <div className={`tile tile--grass ${props.tile.revealed ? `` : `tile--hidden`}`} onClick={this.handleClick}>
+                {
+                    props.tile.revealed &&
+                    <React.Fragment>
+                        {obj}
+                        <div className="tile__text">{content}</div>
+                    </React.Fragment>
+                }
             </div>
         )
     }

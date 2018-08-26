@@ -7,6 +7,7 @@ import {Pattern} from 'model/pattern';
 import { TilePatternInstance } from "model/tile-pattern-instance";
 import { RitualInstance } from "model/ritual-instance";
 import { Ritual } from "model/ritual";
+import { DeepReadonly } from 'util/types';
 
 export class WorldArea {
     @observable
@@ -16,10 +17,14 @@ export class WorldArea {
 
     constructor(
         name: string,
-        grid: Grid<Tile> = new Grid<Tile>(3, 3, (x, y) => new Tile('None'))        
+        grid: Grid<Tile> = new Grid<Tile>(3, 3, (x, y) => new Tile('None', false))        
     ) {
         this.name = name;
         this.grid = grid;
+    }
+
+    get(x: number, y: number) {
+        return this.grid.get(x, y);
     }
 
     getRows() {
@@ -62,12 +67,16 @@ export class WorldArea {
     @action expand(direction: CardinalDirection) {
         if (direction === 'north') {
             this.grid.insertRow(0);
+            this.grid.getDataSlice(0, 0, this.grid.width, 1).forEach(tile => tile && (tile.revealed = true));
         } else if (direction === 'south') {
             this.grid.insertRow(this.grid.height);
+            this.grid.getDataSlice(0, this.grid.height - 1, this.grid.width, 1).forEach(tile => tile && (tile.revealed = true));
         } else if (direction === 'east') {
             this.grid.insertColumn(this.grid.width);
+            this.grid.getDataSlice(this.grid.width - 1, 0, 1, this.grid.height).forEach(tile => tile && (tile.revealed = true));
         } else if (direction === 'west') {
             this.grid.insertColumn(0);
+            this.grid.getDataSlice(0, 0, 1, this.grid.height).forEach(tile => tile && (tile.revealed = true));
         }
     }
 

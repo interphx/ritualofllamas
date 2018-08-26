@@ -5,11 +5,14 @@ import { Activatable } from "model/activatable";
 
 export class Tile {
     @observable
+    public revealed: boolean;
+    @observable
     public llama: Llama;
     @observable
     public activatable?: Activatable | null;
 
-    constructor(llama: Llama) {
+    constructor(llama: Llama, revealed: boolean) {
         this.llama = llama;
+        this.revealed = revealed;
     }
 }

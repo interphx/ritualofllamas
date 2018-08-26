@@ -108,7 +108,7 @@ export var game: GameModel = {
                     var distance = Math.abs(x) + Math.abs(y);
                     var chestProbability = lerp(0.02, 0.1, inverseLerp(2, 10, distance));
                     if (Math.random() <= chestProbability) {
-                        var tile = new Tile('None');
+                        var tile = new Tile('None', false);
                         tile.activatable = new Activatable(
                             new Pattern<Tile | null>(3, 3, match => match.reduce((sum, tile) => tile ? (tile.llama !== 'None' ? sum + 1 : sum) : sum, 0) >= 3),
                             () => {
@@ -119,16 +119,17 @@ export var game: GameModel = {
                         );
                         return tile;
                     } else {
-                        return new Tile('None');
+                        return new Tile('None', false);
                     }
                 };
-                var result = new Grid<Tile>(5, 5, generator);
+                var result = new Grid<Tile>(5, 5, generator, generator);
+                result.getDataSlice(0, 0, 5, 5).forEach(tile => { tile && (tile.revealed = true) });
                 return result;
             }()
         ),
         'testCave': new WorldArea(
             'Test Cave',
-            new Grid<Tile>(3, 3, (x, y) => new Tile('None'))
+            new Grid<Tile>(3, 3, (x, y) => new Tile('None', true))
         )
     },
 
